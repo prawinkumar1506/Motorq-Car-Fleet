@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="wvinth=device-wvinth, initial-scale=1.0">
+    <title> Car Connected Fleet Management System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+</head>
+
+<body class="bg-info">
+    <div class="p-3">
+        <div class="well text-center">
+            <h1> Car Connected Fleet Management System  </h1>
+        </div>
+        <br>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col md-12">
+                <div class="jumbotron p-3">
+                    <h2>Fleet Info <button type="button" class="btn btn-success float-right"
+                            data-toggle="modal" data-target="#create">Add New vehicle</button> </h2>
+
+                    <table class="table table-hover table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>vin</th>
+                                <th>manufacturer</th>
+                                <th>model</th>
+                                <th>owner</th>
+                                <th>fid</th>
+                                <th>reg_status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        {% for row in stations %}
+                        <tr>
+                            <td>{{row.vin}}</td>
+                            <td>{{row.manufacturer}}</td>
+                            <td>{{row.model}}</td>
+                            <td>{{row.owner}}</td>
+                            <td>{{row.fid}}</td>
+                            <td>{{row.reg_status}}</td>
+                            
+                            <td>
+                                <a href="javascript:void(0);" class="btn btn-primary btn-xs" data-toggle="modal"
+                                    data-target="#edit{{row.vin}}">Edit</a>
+                                <a href="/delete/{{row.vin}}" class="btn btn-danger btn-xs">Delete</a>
+                            </td>
+                        </tr>
+
+                        <div id="edit{{row.vin}}" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Update Transit Information</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="/update/{{row.vin}}" method="POST">
+                                            <div class="form-group">
+                                                <label>vin:</label>
+                                                <input type="text" class="form-control" name="vin" value="{{row.vin}}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>manufacturer:</label>
+                                                <input type="text" class="form-control" name="manufacturer"
+                                                    value="{{row.manufacturer}}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>model:</label>
+                                                <input type="text" class="form-control" name="model"
+                                                    value="{{row.model}}">
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label>owner:</label>
+                                                <input type="text" class="form-control" name="owner"
+                                                    value="{{row.owner}}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Fleet id:</label>
+                                                <input type="text" class="form-control" name="fid"
+                                                    value="{{row.fid}}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>reg_status:</label>
+                                                <input type="text" class="form-control" name="reg_status"
+                                                    value="{{row.reg_status}}">
+                                            </div>
+
+
+                                            <div class="form-group">
+                                                <button class="btn btn-primary" type="submit">Update</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </table>
+                    <hr>
+                    <h4>Upload CSV file</h4>
+                    <form method="POST" action="{{url_for('uploadFiles')}}" enctype="multipart/form-data">
+                        <input type="file" name="file">
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
+                    <hr>
+<!--                    <h4>Download Transit Station CSV Report</h4>-->
+<!--                    <a href="{{ url_for('download_csv') }}" class="btn btn-success">Download CSV</a>-->
+
+                </div>
+
+                <div id="create" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Add New vehicle</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{url_for('create')}}" method="POST">
+                                    <div class="form-group">
+                                        <label>vin:</label>
+                                        <input type="text" class="form-control" name="vin" required="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>manufacturer:</label>
+                                        <input type="text" class="form-control" name="manufacturer" required="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>model:</label>
+                                        <input type="text" class="form-control" name="model" required="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>owner:</label>
+                                        <input type="text" class="form-control" name="owner" required="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>fid:</label>
+                                        <input type="text" class="form-control" name="fid" required="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>reg_status:</label>
+                                        <input type="text" class="form-control" name="reg_status" required="1">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button class="btn btn-primary" type="submit">Add New vehicle</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
