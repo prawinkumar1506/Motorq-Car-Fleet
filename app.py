@@ -176,9 +176,6 @@ def download_csv():
 @app.route('/telemetry', methods=['POST'])
 def add_telemetry():
     data = request.get_json()
-    if not data or not all(k in data for k in ['vin', 'timestamp', 'latitude', 'longitude', 'battery', 'odometer']):
-        return jsonify({'error': 'Missing data'})
-
     new_telemetry = Telemetry(
         vin=data['vin'],
         timestamp=data['timestamp'],
@@ -195,11 +192,11 @@ def add_telemetry():
 def get_telemetry(vin):
     telemetry_data = Telemetry.query.filter_by(vin=vin).all()
     if not telemetry_data:
-        return jsonify({'error': 'No telemetry data found for this VIN'})
+        return jsonify({'error':'No telemetry data found for this VIN'})
     
-    output = []
+    ans=[]
     for data in telemetry_data:
-        output.append({
+        ans.append({
             'vin': data.vin,
             'timestamp': data.timestamp,
             'latitude': data.latitude,
@@ -209,9 +206,7 @@ def get_telemetry(vin):
         })
     return jsonify({'telemetry_data': output})
 
-
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-
         app.run(debug=True)
