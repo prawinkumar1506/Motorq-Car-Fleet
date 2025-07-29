@@ -186,16 +186,16 @@ def add_telemetry():
     )
     db.session.add(new_telemetry)
     db.session.commit()
-    return jsonify({'message': 'Telemetry data added successfully'})
+    return jsonify({'message': 'Telemetry data added!!!'})
 
 @app.route('/telemetry/<string:vin>', methods=['GET'])
 def get_telemetry(vin):
-    telemetry_data = Telemetry.query.filter_by(vin=vin).all()
-    if not telemetry_data:
-        return jsonify({'error':'No telemetry data found for this VIN'})
+    t_data = Telemetry.query.filter_by(vin=vin).all()
+    if not t_data:
+        return jsonify({'error':'No telemetry data found'})
     
     ans=[]
-    for data in telemetry_data:
+    for data in t_data:
         ans.append({
             'vin': data.vin,
             'timestamp': data.timestamp,
@@ -204,7 +204,7 @@ def get_telemetry(vin):
             'battery': data.battery,
             'odometer': data.odometer
         })
-    return jsonify({'telemetry_data': output})
+    return jsonify({'t_data': output})
 
 if __name__ == '__main__':
     with app.app_context():
